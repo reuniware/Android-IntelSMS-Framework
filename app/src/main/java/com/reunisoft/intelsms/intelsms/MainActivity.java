@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         wm = null;
         log("IP for server : " + ip);
         //SmsManager smsManager = SmsManager.getDefault();
-        //smsManager.sendTextMessage("0763230000", "+33660003000", "sms message", null, null);
+        //smsManager.sendTextMessage("0763230000 ", "+33660003000", "sms message", null, null);
     }
 
     public void onClick(View src) {

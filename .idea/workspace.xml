@@ -23,7 +23,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="389bd747-5ffb-4c05-8981-b263bb9e7d94" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/reunisoft/intelsms/intelsms/MainActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/reunisoft/intelsms/intelsms/MainActivity.java" />
     </list>
     <ignored path="IntelSMS.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -70,7 +70,7 @@
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/reunisoft/intelsms/intelsms/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.47592068">
-              <caret line="76" column="48" selection-start-line="76" selection-start-column="48" selection-end-line="76" selection-end-column="48" />
+              <caret line="76" column="49" selection-start-line="76" selection-start-column="49" selection-end-line="76" selection-end-column="49" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -2397,7 +2397,7 @@
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/reunisoft/intelsms/intelsms/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.47592068">
-          <caret line="76" column="48" selection-start-line="76" selection-start-column="48" selection-end-line="76" selection-end-column="48" />
+          <caret line="76" column="49" selection-start-line="76" selection-start-column="49" selection-end-line="76" selection-end-column="49" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
