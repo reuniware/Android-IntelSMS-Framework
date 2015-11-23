@@ -1,47 +1,26 @@
 package com.reunisoft.intelsms.intelsms;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.Color;
-import android.net.Uri;
 import android.net.wifi.WifiManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.Telephony;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.telephony.SmsManager;
-import android.telephony.SmsMessage;
 import android.text.format.Formatter;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    public static MainActivity mThis;
+
     private static final String TAG = "intelsms";
     Button buttonStart, buttonStop;
 
@@ -75,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         log("IP for server : " + ip);
         //SmsManager smsManager = SmsManager.getDefault();
         //smsManager.sendTextMessage("0763230000", "+33660003000", "sms message", null, null);
+
+        mThis = this;
     }
 
     public void onClick(View src) {
@@ -118,10 +99,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // Si plus de 1000 lignes dans le log à l'écran alors effacer la zone de log
         if (linearLayout.getChildCount() > 1024) {
-            linearLayout.removeAllViews();
+            linearLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    ((LinearLayout) findViewById(R.id.linearLayout)).removeAllViews();
+                }
+            });
         }
 
         final TextView textView = new TextView(MainActivity.this);
+
         textView.setTextColor(currentTextColor);
         if (currentTextColor == Color.GREEN) currentTextColor = Color.LTGRAY; else currentTextColor = Color.GREEN;
 

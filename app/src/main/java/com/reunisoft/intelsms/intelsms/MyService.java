@@ -5,7 +5,6 @@ package com.reunisoft.intelsms.intelsms;
  */
 import android.app.Service;
 import android.content.Intent;
-//import android.media.MediaPlayer;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
@@ -26,13 +25,11 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.DateFormat;
-import java.text.FieldPosition;
-import java.text.ParseException;
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.UUID;
+
+//import android.media.MediaPlayer;
 
 public class MyService extends Service {
     private static final String TAG = "intelsms-service";
@@ -44,15 +41,13 @@ public class MyService extends Service {
 
     @Override
     public void onCreate() {
-        Toast.makeText(this, "IntelSMS Service Created", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "IntelSMS Service Started", Toast.LENGTH_LONG).show();
         Log.d(TAG, "onCreate");
     }
 
     @Override
     public void onDestroy() {
-        try{
-            Toast.makeText(this, "IntelSMS Service Stopped", Toast.LENGTH_LONG).show();
-        }catch (Exception ex){}
+        Toast.makeText(this, "IntelSMS Service Stopped", Toast.LENGTH_LONG).show();
         Log.d(TAG, "onDestroy");
         enabled = false;
         try{
@@ -78,6 +73,7 @@ public class MyService extends Service {
     Socket socket = null;
     public void startServer() {
         Log.d(TAG,"startServer");
+        log("Starting server");
 
         UUID uuid = UUID.randomUUID();
         final String sessionId = uuid.toString().replace("-", "");
@@ -115,11 +111,6 @@ public class MyService extends Service {
 
                         Log.d(TAG, "client connected");
 
-                        /*if (socket != null)
-                            if (socket.isClosed())
-                                socket = serverSocket.accept();*/
-
-                        assert socket != null;
                         InputStream inputStream = socket.getInputStream();
                         String strFromClient = "";
                         int available = inputStream.available();
@@ -147,9 +138,6 @@ public class MyService extends Service {
 
                         outputStream.close();
                         inputStream.close();
-
-                        //socket.close();
-                        //serverSocket.close();
 
                         Log.d(TAG, "end of server processing");
                     } catch (Exception e) {
@@ -222,6 +210,49 @@ public class MyService extends Service {
         }
         return finalDateString;
     }
+
+    private int currentTextColor = Color.GREEN;
+    public void log(final String str) {
+        final LinearLayout linearLayout = (LinearLayout) MainActivity.mThis.findViewById(R.id.linearLayout);
+
+        // Si plus de 1000 lignes dans le log à l'écran alors effacer la zone de log
+        if (linearLayout.getChildCount() > 1024) {
+            linearLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    ((LinearLayout) MainActivity.mThis.findViewById(R.id.linearLayout)).removeAllViews();
+                }
+            });
+        }
+
+        final TextView textView = new TextView(MainActivity.mThis);
+
+        textView.post(new Runnable() {
+            @Override
+            public void run() {
+                textView.setTextColor(currentTextColor);
+                textView.setTextSize(12);
+                textView.setText(str);
+            }
+        });
+
+        if (currentTextColor == Color.GREEN) currentTextColor = Color.LTGRAY; else currentTextColor = Color.GREEN;
+
+        linearLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                linearLayout.addView(textView);
+            }
+        });
+
+        (MainActivity.mThis.findViewById(R.id.scrollView)).post(new Runnable() {
+            public void run() {
+                ((ScrollView) MainActivity.mThis.findViewById(R.id.scrollView)).fullScroll(View.FOCUS_DOWN);
+            }
+        });
+
+    }
+
 
 }
 
