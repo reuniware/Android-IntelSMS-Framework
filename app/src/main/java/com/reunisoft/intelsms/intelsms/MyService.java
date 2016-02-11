@@ -1,7 +1,7 @@
 package com.reunisoft.intelsms.intelsms;
 
 /**
- * Created by Idjed on 22/11/2015.
+ * Created by Didier on 22/11/2015.
  */
 import android.app.Service;
 import android.content.Intent;
@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.provider.ContactsContract;
+import android.provider.Telephony;
 import android.text.format.Formatter;
 import android.util.Base64;
 import android.util.Log;
@@ -93,7 +94,7 @@ public class MyService extends Service {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                while(enabled==true)
+                while(enabled)
                 {
                     try {
                         if (serverSocket == null) {
@@ -117,8 +118,10 @@ public class MyService extends Service {
                         int available = inputStream.available();
                         Log.d(TAG, "available from client:" + available);
                         for (int i=0;i<available;i++){
-                            int c = inputStream.read();
-                            strFromClient+=(char)c;
+                            if (inputStream != null) {
+                                int c = inputStream.read();
+                                strFromClient += (char) c;
+                            }
                         }
 
                         Log.d(TAG, "received from client:" + strFromClient);
@@ -126,25 +129,32 @@ public class MyService extends Service {
                         OutputStream outputStream = socket.getOutputStream();
                         if (strFromClient.toLowerCase().trim().equals("hello from client")){
                             String strToClient = "hello from server";
-                            outputStream.write(strToClient.getBytes());
-                            outputStream.flush();
+                            if (outputStream!= null) {
+                                outputStream.write(strToClient.getBytes());
+                                outputStream.flush();
+                            }
                             Log.d(TAG, "sent to client:" + strToClient);
                         }
                         else if (strFromClient.toLowerCase().trim().equals("get sms")){
-                            String sms = getSmsMessages();
-                            outputStream.write(sms.getBytes());
-                            outputStream.flush();
+                            String sms = getSmsMessages(SMS_TYPE.SMS_INBOX);
+                            sms += getSmsMessages(SMS_TYPE.SMS_SENT);
+                            if (outputStream != null) {
+                                outputStream.write(sms.getBytes());
+                                outputStream.flush();
+                            }
                             Log.d(TAG, "bytes sent to client:" + sms.length());
                         }
                         else if (strFromClient.toLowerCase().trim().equals("get contacts")){
                             String contacts = getContacts();
-                            outputStream.write(contacts.getBytes());
-                            outputStream.flush();
+                            if (outputStream != null) {
+                                outputStream.write(contacts.getBytes());
+                                outputStream.flush();
+                            }
                             Log.d(TAG, "bytes sent to client:" + contacts.length());
                         }
 
-                        outputStream.close();
-                        inputStream.close();
+                        if (outputStream != null) outputStream.close();
+                        if (inputStream != null) inputStream.close();
 
                         Log.d(TAG, "end of server processing");
                     } catch (Exception e) {
@@ -156,14 +166,26 @@ public class MyService extends Service {
         t.start();
     }
 
-    public String getSmsMessages(){
+    // todo:faire le rapprochement avec TextBasedSmsColumns?
+    private enum SMS_TYPE {
+        SMS_INBOX,
+        SMS_SENT,
+        SMS_DRAFT
+    }
+
+    public String getSmsMessages(SMS_TYPE smsType){
         try {
-            // public static final String INBOX = "content://sms/inbox";
-            // public static final String SENT = "content://sms/sent";
-            // public static final String DRAFT = "content://sms/draft";
-            Cursor cursor = getContentResolver().query(Uri.parse("content://sms/inbox"), null, null, null, null);
+            String strSmsType = "";
+            if (smsType.equals(SMS_TYPE.SMS_INBOX)) {
+                strSmsType = "content://sms/inbox";
+            } else if (smsType.equals(SMS_TYPE.SMS_SENT)) {
+                strSmsType = "content://sms/sent";
+            } else if (smsType.equals(SMS_TYPE.SMS_DRAFT)) {
+                strSmsType = "content://sms/draft";
+            }
+
+            Cursor cursor = getContentResolver().query(Uri.parse(strSmsType), null, null, null, null);
             String msgData = "", colName="", value="";
-            assert cursor != null;
             String encoded = "", date="";
             if (cursor.moveToFirst()) { // must check the result to prevent exception
                 do {
@@ -172,7 +194,6 @@ public class MyService extends Service {
                         value = cursor.getString(idx);
 
                         msgData += " " + colName + ":";
-
                         try {
                             if (!colName.contains("date")) {
                                 encoded = Base64.encodeToString(value.getBytes(), Base64.DEFAULT);
@@ -221,7 +242,6 @@ public class MyService extends Service {
     public String getContacts(){
         String finalResult = "";
         Cursor cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,null,null, null);
-        String contactData="", colName="", value="";
         while (cursor.moveToNext())
         {
             String name = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
