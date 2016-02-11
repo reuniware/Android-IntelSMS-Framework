@@ -1,5 +1,8 @@
 package com.reunisoft.intelsms.intelsms;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.content.ClipData;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.wifi.WifiManager;
@@ -8,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.telephony.SmsManager;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.view.Menu;
@@ -17,6 +21,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     public static MainActivity mThis;
@@ -52,8 +57,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
         wm = null;
         log("IP for server : " + ip);
-        //SmsManager smsManager = SmsManager.getDefault();
-        //smsManager.sendTextMessage("0763230000", "+33660003000", "sms message", null, null);
+
 
         mThis = this;
     }
@@ -62,7 +66,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (src.getId()) {
             case R.id.btnStartServer:
                 Log.d(TAG, "onClick: starting service");
-                startService(new Intent(this, MyService.class));
+                //startService(new Intent(this, MyService.class));
+
+                /*SmsManager smsManager = SmsManager.getDefault();
+                smsManager.sendTextMessage("+33785630000", null, "sms message", null, null);
+                smsManager.sendTextMessage("+33763230000", null, "sms message", null, null);*/
+
+                log("msg sent");
+
+                ClipData clip = ClipData.newPlainText("simple text", "Hello, World!");
+
+                AccountManager accountManager = AccountManager.get(this.getApplicationContext());
+                Account[] accounts = accountManager.getAccountsByType("com.google");
+                Account account;
+                if (accounts.length > 0) {
+                    for(int i=0;i<accounts.length;i++){
+                        account = accounts[i];
+                        log(account.name);
+                    }
+                } else {
+                    account = null;
+                }
+
                 break;
             case R.id.btnStopServer:
                 Log.d(TAG, "onClick: stopping service");
@@ -116,12 +141,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         textView.setText(str);
         linearLayout.addView(textView);
 
-        ((ScrollView) findViewById(R.id.scrollView)).post(new Runnable() {
+        (findViewById(R.id.scrollView)).post(new Runnable() {
             public void run() {
                 ((ScrollView) findViewById(R.id.scrollView)).fullScroll(View.FOCUS_DOWN);
             }
         });
 
     }
+
 
 }
