@@ -36,7 +36,7 @@ namespace IntelSmsServer
 		{
 			InitializeComponent();			
 		}
-		
+		 
 		TcpClient clientSocket = null;
 		NetworkStream networkStream = null;
 		StreamReader reader = null;
