@@ -1,7 +1,7 @@
 # Android-IntelSMS-Framework
 IntelSMS embedded server intended to be accessed by the IntelSMS Desktop version.
 
-This is the really basic foundation code for receiving commands from a remote android device and reply to them.
+This is the really basic foundation code for havind an Android device receiving commands from a remote Windows device and reply to them.
 This is C# code for the client part (Windows), that will be found in the .cs files (most important functions).
 This is Java for the server part (Android), that will be found in files under /app folder.
 
