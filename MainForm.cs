@@ -1,6 +1,5 @@
 ﻿/*
  * Created by SharpDevelop.
- * User: Idjed
  * Date: 20/11/2015
  * Time: 09:56
  * 
